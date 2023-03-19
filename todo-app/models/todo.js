@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-,Op} = require('sequelize');
+"use strict";
+const { Model, Op } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Todo extends Model {
     /**
@@ -11,7 +9,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-    } static overdueTodo() {
+    }
+    static overdueTodo() {
       return this.findAll({
         where: {
           dueDate: { [Op.lt]: new Date() },
@@ -48,13 +47,14 @@ module.exports = (sequelize, DataTypes) => {
     static getTodos() {
       return this.findAll({ order: [["id", "ASC"]] });
     }
-    static addTodo({title,dueDate}){
-      return this.create({title: title,dueDate: dueDate,completed: false})
+    static addTodo({ title, dueDate }) {
+      return this.create({ title: title, dueDate: dueDate, completed: false });
     }
     static overdueTodo() {
       return this.findAll({
         where: {
           dueDate: { [Op.lt]: new Date() },
+          completed: false,
         },
         order: [["dueDate", "ASC"]],
       });
@@ -64,6 +64,7 @@ module.exports = (sequelize, DataTypes) => {
       return this.findAll({
         where: {
           dueDate: { [Op.eq]: new Date() },
+          completed: false,
         },
         order: [["dueDate", "ASC"]],
       });
@@ -73,6 +74,7 @@ module.exports = (sequelize, DataTypes) => {
       return this.findAll({
         where: {
           dueDate: { [Op.gt]: new Date() },
+          completed: false,
         },
         order: [["dueDate", "ASC"]],
       });
@@ -94,13 +96,16 @@ module.exports = (sequelize, DataTypes) => {
       return this.destroy();
     }
   }
-  Todo.init({
-    title: DataTypes.STRING,
-    dueDate: DataTypes.DATEONLY,
-    completed: DataTypes.BOOLEAN
-  }, {
-    sequelize,
-    modelName: 'Todo',
-  });
+  Todo.init(
+    {
+      title: DataTypes.STRING,
+      dueDate: DataTypes.DATEONLY,
+      completed: DataTypes.BOOLEAN,
+    },
+    {
+      sequelize,
+      modelName: "Todo",
+    }
+  );
   return Todo;
 };
