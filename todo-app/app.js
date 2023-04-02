@@ -1,5 +1,4 @@
 const { request, response } = require("express");
-const express = require("express");
 var csrf = require("tiny-csrf");
 const passport = require("passport");
 const connectEnsureLogin = require("connect-ensure-login");
@@ -10,7 +9,7 @@ const saltRounds = 10;
 const flash = require("connect-flash");
 
 //var csurf = require("tiny-csrf");
-//const express = require("express");
+const express = require("express");
 const app = express();
 const { Todo, User } = require("./models");
 const bodyParser = require("body-parser");
@@ -20,6 +19,8 @@ app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser("shh! some secret string"));
 app.use(csrf("this_should_be_32_character_long", ["POST", "PUT", "DELETE"]));
+app.set("view engine", "ejs");
+app.use(flash());
 app.use(
   session({
     secret: "my-super-secret-key-21728172615261562",
@@ -44,7 +45,10 @@ passport.deserializeUser((id, done) => {
 
 app.use(passport.initialize());
 app.use(passport.session());
-
+app.use(function (request, response, next) {
+  response.locals.messages = request.flash();
+  next();
+});
 passport.use(
   new LocalStrategy(
     {
