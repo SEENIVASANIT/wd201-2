@@ -115,7 +115,7 @@ app.get(
   }
 );
 
-app.post("/users", connectEnsureLogin.ensureLoggedIn(),async (request, response) => {
+app.post("/users",async (request, response) => {
   const hashedPwd = await bcrypt.hash(request.body.password, saltRounds);
   console.log(hashedPwd);
   try {
@@ -159,7 +159,7 @@ app.post(
 );
 app.use(express.static(path.join(__dirname, "public")));
 
-app.get("/todos", connectEnsureLogin.ensureLoggedIn(),async (request, response) => {
+app.get("/todos", async (request, response) => {
   try {
     const todos = await Todo.findAll({ order: [["id", "ASC"]] });
     return response.json(todos);
