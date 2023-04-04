@@ -115,7 +115,7 @@ app.get(
   }
 );
 
-app.post("/users", async (request, response) => {
+app.post("/users", connectEnsureLogin.ensureLoggedIn(),async (request, response) => {
   const hashedPwd = await bcrypt.hash(request.body.password, saltRounds);
   console.log(hashedPwd);
   try {
@@ -159,7 +159,7 @@ app.post(
 );
 app.use(express.static(path.join(__dirname, "public")));
 
-app.get("/todos", async (request, response) => {
+app.get("/todos", connectEnsureLogin.ensureLoggedIn(),async (request, response) => {
   try {
     const todos = await Todo.findAll({ order: [["id", "ASC"]] });
     return response.json(todos);
@@ -168,7 +168,7 @@ app.get("/todos", async (request, response) => {
     return response.status(422).json(error);
   }
 });
-app.post("/todos", async (request, response) => {
+app.post("/todos",connectEnsureLogin.ensureLoggedIn(), async (request, response) => {
   console.log("creating a todo", request.body);
   try {
     await Todo.addTodo({
@@ -184,7 +184,7 @@ app.post("/todos", async (request, response) => {
   }
 });
 
-app.put("/todos/:id", async (request, response) => {
+app.put("/todos/:id",connectEnsureLogin.ensureLoggedIn(), async (request, response) => {
   console.log("update a todo", request.params.id);
   const todo = await Todo.findByPk(request.params.id);
 
@@ -197,7 +197,7 @@ app.put("/todos/:id", async (request, response) => {
   }
 });
 
-app.delete("/todos/:id", async (request, response) => {
+app.delete("/todos/:id",connectEnsureLogin.ensureLoggedIn(), async (request, response) => {
   try {
     const todo = await Todo.findByPk(request.params.id);
     if (todo) {
